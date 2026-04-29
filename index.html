@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java & OOP — Materi Interaktif</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1e2d45;
+    --accent: #4fffb0;
+    --accent2: #7c6fff;
+    --accent3: #ff6b9d;
+    --text: #e8f0fe;
+    --text-muted: #6b7fa3;
+    --text-dim: #3d5070;
+    --code-bg: #090d18;
+    --font-display: 'Syne', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+    --kw: #7c6fff;
+    --fn: #4fffb0;
+    --str: #ffd080;
+    --num: #ff6b9d;
+    --cm: #3d5070;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-display);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* BG grid pattern */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(76,255,176,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(76,255,176,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .layout {
+    display: flex;
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .sidebar-header {
+    padding: 2rem 1.5rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .sidebar-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .sidebar-title span { color: var(--accent); }
+
+  .progress-section {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .progress-track {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+    width: 14.28%;
+  }
+
+  .nav-list {
+    padding: 1rem 0;
+    flex: 1;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-left: 2px solid transparent;
+    position: relative;
+  }
+
+  .nav-item:hover { background: var(--surface2); }
+
+  .nav-item.active {
+    background: rgba(76,255,176,0.06);
+    border-left-color: var(--accent);
+  }
+
+  .nav-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .nav-item.active .nav-num {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+    font-weight: 700;
+  }
+
+  .nav-item.done .nav-num {
+    background: rgba(76,255,176,0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .nav-text {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    line-height: 1.3;
+    transition: color 0.2s;
+  }
+
+  .nav-item.active .nav-text { color: var(--text); }
+
+  .nav-badge {
+    margin-left: auto;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: var(--surface2);
+    color: var(--text-dim);
+  }
+
+  /* MAIN */
+  .main {
+    flex: 1;
+    padding: 3rem 3.5rem;
+    max-width: 900px;
+    overflow-x: hidden;
+  }
+
+  .section { display: none; animation: fadeIn 0.3s ease; }
+  .section.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .module-tag {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .module-tag::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .section-title {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+
+  .section-desc {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    max-width: 600px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+  }
+
+  /* CONCEPT GRID */
+  .concept-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 1.5rem 0;
+  }
+
+  .concept-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .concept-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+  }
+
+  .concept-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .concept-card.c-green::before { background: var(--accent); }
+  .concept-card.c-purple::before { background: var(--accent2); }
+  .concept-card.c-pink::before { background: var(--accent3); }
+  .concept-card.c-orange::before { background: #ff8c42; }
+
+  .concept-card h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .concept-card p {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    font-family: var(--font-mono);
+  }
+
+  /* CODE BLOCK */
+  .code-wrap {
+    margin: 1.25rem 0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .code-header {
+    background: var(--surface2);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .code-lang {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--accent);
+    letter-spacing: 0.1em;
+  }
+
+  .code-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .code-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+
+  pre {
+    background: var(--code-bg);
+    padding: 1.25rem 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.8;
+    overflow-x: auto;
+    color: var(--text);
+  }
+
+  .kw { color: var(--kw); }
+  .fn { color: var(--fn); }
+  .str { color: var(--str); }
+  .num { color: var(--num); }
+  .cm { color: var(--cm); font-style: italic; }
+  .ann { color: #ff8c42; }
+
+  /* CONTENT SECTION */
+  h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 2rem 0 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  h3::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  p.body {
+    font-size: 13px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+
+  /* INHERITANCE DIAGRAM */
+  .diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    margin: 1.5rem 0;
+    padding: 2rem;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  .d-box {
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    min-width: 160px;
+    font-family: var(--font-mono);
+  }
+
+  .d-box.parent {
+    background: rgba(124,111,255,0.15);
+    border: 1px solid rgba(124,111,255,0.4);
+    color: var(--accent2);
+  }
+
+  .d-box.child {
+    background: rgba(76,255,176,0.1);
+    border: 1px solid rgba(76,255,176,0.3);
+    color: var(--accent);
+  }
+
+  .d-box.child2 {
+    background: rgba(255,107,157,0.1);
+    border: 1px solid rgba(255,107,157,0.3);
+    color: var(--accent3);
+  }
+
+  .d-sub {
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+
+  .d-arrow {
+    font-size: 20px;
+    color: var(--text-dim);
+    line-height: 1;
+    padding: 4px 0;
+    font-family: var(--font-mono);
+  }
+
+  .d-row {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .d-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  /* ACCESS TABLE */
+  .acc-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    font-family: var(--font-mono);
+    margin: 1rem 0;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .acc-table th {
+    background: var(--surface2);
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .acc-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  .acc-table tr:last-child td { border-bottom: none; }
+  .acc-table tr:hover td { background: var(--surface2); }
+  .acc-table td:first-child { color: var(--kw); font-weight: 700; }
+
+  .chk { color: var(--accent); }
+  .x { color: var(--accent3); }
+
+  /* POLY TABS */
+  .poly-nav {
+    display: flex;
+    gap: 4px;
+    margin: 1rem 0 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .poly-tab-btn {
+    padding: 8px 16px;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    color: var(--text-dim);
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.2s;
+  }
+
+  .poly-tab-btn:hover { color: var(--text-muted); }
+  .poly-tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .poly-panel { display: none; }
+  .poly-panel.active { display: block; }
+
+  /* QUIZ */
+  .quiz-section {
+    margin-top: 2.5rem;
+    padding: 1.5rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .quiz-section::before {
+    content: 'QUIZ';
+    position: absolute;
+    top: -8px; right: 16px;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    background: var(--surface2);
+    padding: 0 8px;
+  }
+
+  .quiz-q {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .quiz-btn {
+    text-align: left;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    background: var(--code-bg);
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+
+  .quiz-btn:hover:not(:disabled) {
+    border-color: var(--accent2);
+    color: var(--text);
+  }
+
+  .quiz-btn.correct {
+    background: rgba(76,255,176,0.1);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .quiz-btn.wrong {
+    background: rgba(255,107,157,0.1);
+    border-color: var(--accent3);
+    color: var(--accent3);
+  }
+
+  .quiz-result {
+    margin-top: 1rem;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    line-height: 1.6;
+  }
+
+  .quiz-result.ok {
+    background: rgba(76,255,176,0.08);
+    border: 1px solid rgba(76,255,176,0.2);
+    color: var(--accent);
+  }
+
+  .quiz-result.no {
+    background: rgba(255,107,157,0.08);
+    border: 1px solid rgba(255,107,157,0.2);
+    color: var(--accent3);
+  }
+
+  /* NAVIGATION BUTTONS */
+  .nav-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .nav-btn {
+    padding: 12px 28px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    letter-spacing: 0.05em;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .btn-primary:hover {
+    background: #3de89e;
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--text-muted);
+    color: var(--text);
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .layout { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; position: static; flex-direction: row; overflow-x: auto; flex-wrap: nowrap; }
+    .sidebar-header, .progress-section { display: none; }
+    .nav-list { display: flex; flex-direction: row; padding: 0.5rem; gap: 4px; flex-wrap: nowrap; }
+    .nav-item { padding: 6px 12px; border-left: none; border-bottom: 2px solid transparent; white-space: nowrap; }
+    .nav-item.active { border-bottom-color: var(--accent); }
+    .nav-num { display: none; }
+    .nav-badge { display: none; }
+    .main { padding: 1.5rem; }
+    .section-title { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">// course</div>
+      <div class="sidebar-title">Java &amp; <span>OOP</span><br>Materi Lengkap</div>
+    </div>
+
+    <div class="progress-section">
+      <div class="progress-label">
+        <span id="prog-label">Modul 1 / 7</span>
+        <span id="prog-pct">14%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="prog-fill"></div>
+      </div>
+    </div>
+
+    <nav class="nav-list" id="nav-list">
+      <div class="nav-item active" onclick="goSection(0)">
+        <div class="nav-num">1</div>
+        <div class="nav-text">Intro OOP &amp; Java</div>
+        <span class="nav-badge">Basic</span>
+      </div>
+      <div class="nav-item" onclick="goSection(1)">
+        <div class="nav-num">2</div>
+        <div class="nav-text">Method &amp; Kondisi</div>
+        <span class="nav-badge">Basic</span>
+      </div>
+      <div class="nav-item" onclick="goSection(2)">
+        <div class="nav-num">3</div>
+        <div class="nav-text">Looping &amp; Array</div>
+        <span class="nav-badge">Basic</span>
+      </div>
+      <div class="nav-item" onclick="goSection(3)">
+        <div class="nav-num">4</div>
+        <div class="nav-text">OOP Paradigma</div>
+        <span class="nav-badge">OOP</span>
+      </div>
+      <div class="nav-item" onclick="goSection(4)">
+        <div class="nav-num">5</div>
+        <div class="nav-text">Encapsulation</div>
+        <span class="nav-badge">OOP</span>
+      </div>
+      <div class="nav-item" onclick="goSection(5)">
+        <div class="nav-num">6</div>
+        <div class="nav-text">Inheritance</div>
+        <span class="nav-badge">OOP</span>
+      </div>
+      <div class="nav-item" onclick="goSection(6)">
+        <div class="nav-num">7</div>
+        <div class="nav-text">Polymorphism</div>
+        <span class="nav-badge">OOP</span>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- ===== SECTION 1 ===== -->
+    <div class="section active" id="s0">
+      <div class="section-header">
+        <div class="module-tag">Modul 01 — Fondasi</div>
+        <h1 class="section-title">Intro OOP<br>&amp; Java Basic</h1>
+        <p class="section-desc">Java adalah bahasa OOP yang dikompilasi ke bytecode dan dijalankan di JVM — platform independent, strongly typed, dan punya garbage collection otomatis.</p>
+      </div>
+
+      <div class="concept-grid">
+        <div class="concept-card c-green">
+          <h4>Compiled + Interpreted</h4>
+          <p>.java → bytecode (.class) → JVM menjalankan di mana saja</p>
+        </div>
+        <div class="concept-card c-purple">
+          <h4>Strongly Typed</h4>
+          <p>Setiap variabel wajib dideklarasikan tipe datanya secara eksplisit</p>
+        </div>
+        <div class="concept-card c-pink">
+          <h4>Platform Independent</h4>
+          <p>"Write once, run anywhere" — berkat Java Virtual Machine</p>
+        </div>
+        <div class="concept-card c-orange">
+          <h4>Garbage Collection</h4>
+          <p>Manajemen memori otomatis, tidak perlu hapus objek manual</p>
+        </div>
+      </div>
+
+      <h3>Program pertama</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <div class="code-lang">HelloWorld.java</div>
+        </div>
+        <pre><span class="kw">public class</span> <span class="fn">HelloWorld</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+        <span class="cm">// Titik masuk program Java</span>
+        System.out.println(<span class="str">"Halo, Dunia!"</span>);
+    }
+}</pre>
+      </div>
+
+      <h3>Tipe data primitif</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <div class="code-lang">TipeData.java</div>
+        </div>
+        <pre><span class="kw">int</span>     angka   = <span class="num">42</span>;        <span class="cm">// bilangan bulat</span>
+<span class="kw">double</span>  pi      = <span class="num">3.14</span>;     <span class="cm">// desimal presisi ganda</span>
+<span class="kw">float</span>   suhu    = <span class="num">36.5f</span>;   <span class="cm">// desimal presisi rendah</span>
+<span class="kw">boolean</span> aktif   = <span class="kw">true</span>;     <span class="cm">// benar atau salah</span>
+<span class="kw">char</span>    huruf   = <span class="str">'A'</span>;      <span class="cm">// satu karakter</span>
+<span class="kw">long</span>    besar   = <span class="num">9876543210L</span>; <span class="cm">// int sangat besar</span>
+String  nama    = <span class="str">"Java"</span>;  <span class="cm">// teks (bukan primitif, ini Object)</span>
+
+<span class="cm">// Operator aritmatika</span>
+<span class="kw">int</span> hasil = (<span class="num">10</span> + <span class="num">3</span>) * <span class="num">2</span> / <span class="num">4</span> % <span class="num">3</span>; <span class="cm">// = 0</span>
+
+<span class="cm">// String concatenation</span>
+String pesan = <span class="str">"Nilai: "</span> + angka; <span class="cm">// "Nilai: 42"</span></pre>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-q" id="qq0">Tipe data mana yang tepat untuk menyimpan nilai desimal seperti 3.14?</div>
+        <div class="quiz-options" id="qo0"></div>
+        <div id="qr0"></div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="nav-btn btn-primary" onclick="goSection(1)">Modul Berikutnya →</button>
+      </div>
+    </div>
+
+    <!-- ===== SECTION 2 ===== -->
+    <div class="section" id="s1">
+      <div class="section-header">
+        <div class="module-tag">Modul 02 — Kontrol Alur</div>
+        <h1 class="section-title">Method &amp;<br>Conditional</h1>
+        <p class="section-desc">Method adalah blok kode reusable dengan nama, parameter, dan return type. Conditional mengontrol alur eksekusi berdasarkan kondisi boolean.</p>
+      </div>
+
+      <h3>Anatomi Method</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <div class="code-lang">ContohMethod.java</div>
+        </div>
+        <pre><span class="cm">// [modifier] [return_type] namaMethod([parameter]) { body }</span>
+
+<span class="cm">// Method yang mengembalikan nilai (return int)</span>
+<span class="kw">public static int</span> <span class="fn">tambah</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) {
+    <span class="kw">return</span> a + b;
+}
+
+<span class="cm">// Method void = tidak mengembalikan nilai</span>
+<span class="kw">public static void</span> <span class="fn">sapa</span>(String nama) {
+    System.out.println(<span class="str">"Halo, "</span> + nama + <span class="str">"!"</span>);
+}
+
+<span class="cm">// Memanggil method</span>
+<span class="kw">int</span> hasil = <span class="fn">tambah</span>(<span class="num">5</span>, <span class="num">3</span>);    <span class="cm">// hasil = 8</span>
+<span class="fn">sapa</span>(<span class="str">"Budi"</span>);                <span class="cm">// Halo, Budi!</span></pre>
+      </div>
+
+      <h3>If / Else If / Else</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <div class="code-lang">Kondisi.java</div>
+        </div>
+        <pre><span class="kw">int</span> nilai = <span class="num">85</span>;
+
+<span class="kw">if</span> (nilai >= <span class="num">90</span>) {
+    System.out.println(<span class="str">"Grade A — Sangat Baik"</span>);
+} <span class="kw">else if</span> (nilai >= <span class="num">80</span>) {
+    System.out.println(<span class="str">"Grade B — Baik"</span>);
+} <span class="kw">else if</span> (nilai >= <span class="num">70</span>) {
+    System.out.println(<span class="str">"Grade C — Cukup"</span>);
+} <span class="kw">else</span> {
+    System.out.println(<span class="str">"Grade D — Perlu Perbaikan"</span>);
+}
+
+<span class="cm">// Ternary operator (shorthand if-else)</span>
+String status = (nilai >= <span class="num">60</span>) ? <span class="str">"Lulus"</span> : <span class="str">"Gagal"</span>;</pre>
+      </div>
+
+      <h3>Switch Statement</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <div class="code-lang">Switch.java</div>
+        </div>
+        <pre><span class="kw">int</span> hari = <span class="num">1</span>; <span class="cm">// 1 = Senin</span>
+
+<span class="kw">switch</span> (hari) {
+    <span class="kw">case</span> <span class="num">1</span>:
+        System.out.println(<span class="str">"Senin — Awal pekan"</span>);
+        <span class="kw">break</span>;
+    <span class="kw">case</span> <span class="num">5</span>:
+        System.out.println(<span class="str">"Jumat — Akhir kerja"</span>);
+        <span class="kw">break</span>;
+    <span class="kw">case</span> <span class="num">6</span>:
+    <span class="kw">case</span> <span class="num">7</span>:
+        System.out.println(<span class="str">"Weekend!"</span>);
+        <span class="kw">break</span>;
+    <span class="kw">default</span>:
+        System.out.println(<span class="str">"Hari biasa"</span>);
+}</pre>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-q" id="qq1">Apa yang dimaksud method dengan return type <code>void</code>?</div>
+        <div class="quiz-options" id="qo1"></div>
+        <div id="qr1"></div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="nav-btn btn-secondary" onclick="goSection(0)">← Sebelumnya</button>
+        <button class="nav-btn btn-primary" onclick="goSection(2)">Selanjutnya →</button>
+      </div>
+    </div>
+
+    <!-- ===== SECTION 3 ===== -->
+    <div class="section" id="s2">
+      <div class="section-header">
+        <div class="module-tag">Modul 03 — Iterasi &amp; Koleksi</div>
+        <h1 class="section-title">Looping<br>&amp; Array</h1>
+        <p class="section-desc">Loop mengulang eksekusi kode. Array menyimpan banyak nilai bertipe sama dalam satu variabel terindeks mulai dari 0.</p>
+      </div>
+
+      <h3>Tiga jenis loop</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <div class="code-lang">Loop.java</div>
+        </div>
+        <pre><span class="cm">// 1. FOR — jumlah iterasi sudah diketahui</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < <span class="num">5</span>; i++) {
+    System.out.print(i + <span class="str">" "</span>); <span class="cm">// 0 1 2 3 4</span>
+}
+
+<span class="cm">// 2. WHILE — periksa kondisi SEBELUM iterasi</span>
+<span class="kw">int</span> x = <span class="num">1</span>;
+<span class="kw">while</span> (x <= <span class="num">5</span>) {
+    System.out.print(x + <span class="str">" "</span>);
+    x++;
+}
+
+<span class="cm">// 3. DO-WHILE — eksekusi MINIMAL sekali, cek kondisi SESUDAH</span>
+<span class="kw">int</span> n = <span class="num">10</span>;
+<span class="kw">do</span> {
+    System.out.println(<span class="str">"Pasti jalan: "</span> + n);
+    n++;
+} <span class="kw">while</span> (n < <span class="num">5</span>); <span class="cm">// kondisi false, tapi sudah jalan sekali</span>
+
+<span class="cm">// BREAK &amp; CONTINUE</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < <span class="num">10</span>; i++) {
+    <span class="kw">if</span> (i == <span class="num">3</span>) <span class="kw">continue</span>; <span class="cm">// lewati i=3</span>
+    <span class="kw">if</span> (i == <span class="num">7</span>) <span class="kw">break</span>;    <span class="cm">// berhenti di i=7</span>
+    System.out.print(i + <span class="str">" "</span>); <span class="cm">// 0 1 2 4 5 6</span>
+}</pre>
+      </div>
+
+      <h3>Array 1D &amp; 2D</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <div class="code-lang">Array.java</div>
+        </div>
+        <pre><span class="cm">// Deklarasi Array 1D</span>
+<span class="kw">int</span>[] nilai = {<span class="num">85</span>, <span class="num">90</span>, <span class="num">78</span>, <span class="num">92</span>, <span class="num">88</span>};
+System.out.println(nilai[<span class="num">0</span>]);          <span class="cm">// 85 (index pertama)</span>
+System.out.println(nilai.length);      <span class="cm">// 5 (jumlah elemen)</span>
+
+<span class="cm">// For-Each (enhanced for) — lebih ringkas</span>
+<span class="kw">for</span> (<span class="kw">int</span> n : nilai) {
+    System.out.print(n + <span class="str">" "</span>);
+}
+
+<span class="cm">// Array 2D (matriks baris x kolom)</span>
+<span class="kw">int</span>[][] matriks = {
+    {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>},   <span class="cm">// baris 0</span>
+    {<span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>},   <span class="cm">// baris 1</span>
+    {<span class="num">7</span>, <span class="num">8</span>, <span class="num">9</span>}    <span class="cm">// baris 2</span>
+};
+System.out.println(matriks[<span class="num">1</span>][<span class="num">2</span>]);    <span class="cm">// 6 (baris 1, kolom 2)</span>
+
+<span class="cm">// Iterasi matriks dengan nested loop</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < matriks.length; i++) {
+    <span class="kw">for</span> (<span class="kw">int</span> j = <span class="num">0</span>; j < matriks[i].length; j++) {
+        System.out.print(matriks[i][j] + <span class="str">"\t"</span>);
+    }
+    System.out.println();
+}</pre>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-q" id="qq2">Apa output dari: <code>int[] a = {10, 20, 30}; System.out.println(a[2]);</code>?</div>
+        <div class="quiz-options" id="qo2"></div>
+        <div id="qr2"></div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="nav-btn btn-secondary" onclick="goSection(1)">← Sebelumnya</button>
+        <button class="nav-btn btn-primary" onclick="goSection(3)">Selanjutnya →</button>
+      </div>
+    </div>
+
+    <!-- ===== SECTION 4 ===== -->
+    <div class="section" id="s3">
+      <div class="section-header">
+        <div class="module-tag">Modul 04 — OOP Inti</div>
+        <h1 class="section-title">OOP Paradigma<br>Object &amp; Class</h1>
+        <p class="section-desc">OOP mengorganisir kode menjadi objek yang punya atribut (data) dan method (perilaku). Class adalah blueprint, Object adalah instansinya.</p>
+      </div>
+
+      <div class="concept-grid">
+        <div class="concept-card c-purple">
+          <h4>Class</h4>
+          <p>Blueprint / cetakan yang mendefinisikan struktur dan perilaku objek</p>
+        </div>
+        <div class="concept-card c-green">
+          <h4>Object</h4>
+          <p>Instance nyata dari class, dibuat dengan keyword <code>new</code></p>
+        </div>
+        <div class="concept-card c-pink">
+          <h4>Attribute</h4>
+          <p>Variabel yang menyimpan data / state dari sebuah objek (field)</p>
+        </div>
+        <div class="concept-card c-orange">
+          <h4>Constructor</h4>
+          <p>Method khusus dipanggil saat objek dibuat, nama = nama class</p>
+        </div>
+      </div>
+
+      <h3>Membuat Class &amp; Object</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <div class="code-lang">Mahasiswa.java</div>
+        </div>
+        <pre><span class="kw">public class</span> <span class="fn">Mahasiswa</span> {
+
+    <span class="cm">// ── ATRIBUT ──────────────────────────────</span>
+    String nama;
+    <span class="kw">int</span>    nim;
+    <span class="kw">double</span> ipk;
+    String jurusan;
+
+    <span class="cm">// ── CONSTRUCTOR ──────────────────────────</span>
+    <span class="kw">public</span> <span class="fn">Mahasiswa</span>(String nama, <span class="kw">int</span> nim, String jurusan) {
+        <span class="kw">this</span>.nama    = nama;    <span class="cm">// this = objek ini sendiri</span>
+        <span class="kw">this</span>.nim     = nim;
+        <span class="kw">this</span>.jurusan = jurusan;
+        <span class="kw">this</span>.ipk     = <span class="num">0.0</span>;
+    }
+
+    <span class="cm">// ── METHOD ───────────────────────────────</span>
+    <span class="kw">public void</span> <span class="fn">perkenalan</span>() {
+        System.out.println(<span class="str">"Nama    : "</span> + nama);
+        System.out.println(<span class="str">"NIM     : "</span> + nim);
+        System.out.println(<span class="str">"Jurusan : "</span> + jurusan);
+    }
+
+    <span class="kw">public void</span> <span class="fn">setIPK</span>(<span class="kw">double</span> ipk) {
+        <span class="kw">this</span>.ipk = ipk;
+    }
+
+    <span class="kw">public</span> String <span class="fn">getStatus</span>() {
+        <span class="kw">return</span> (ipk >= <span class="num">3.5</span>) ? <span class="str">"Cumlaude"</span> : <span class="str">"Reguler"</span>;
+    }
+}
+
+<span class="cm">// ── PENGGUNAAN (di class Main) ────────────</span>
+<span class="fn">Mahasiswa</span> mhs1 = <span class="kw">new</span> <span class="fn">Mahasiswa</span>(<span class="str">"Budi"</span>, <span class="num">12345</span>, <span class="str">"Informatika"</span>);
+<span class="fn">Mahasiswa</span> mhs2 = <span class="kw">new</span> <span class="fn">Mahasiswa</span>(<span class="str">"Sari"</span>, <span class="num">67890</span>, <span class="str">"Sistem Informasi"</span>);
+
+mhs1.<span class="fn">perkenalan</span>();
+mhs1.<span class="fn">setIPK</span>(<span class="num">3.8</span>);
+System.out.println(mhs1.<span class="fn">getStatus</span>()); <span class="cm">// Cumlaude</span></pre>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-q" id="qq3">Apa fungsi keyword <code>this</code> di dalam sebuah class?</div>
+        <div class="quiz-options" id="qo3"></div>
+        <div id="qr3"></div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="nav-btn btn-secondary" onclick="goSection(2)">← Sebelumnya</button>
+        <button class="nav-btn btn-primary" onclick="goSection(4)">Selanjutnya →</button>
+      </div>
+    </div>
+
+    <!-- ===== SECTION 5 ===== -->
+    <div class="section" id="s4">
+      <div class="section-header">
+        <div class="module-tag">Modul 05 — Pilar OOP #1</div>
+        <h1 class="section-title">Access Modifier<br>&amp; Encapsulation</h1>
+        <p class="section-desc">Encapsulation menyembunyikan data internal objek dari akses luar. Data diproteksi dengan <code>private</code> dan dikontrol via getter/setter.</p>
+      </div>
+
+      <h3>Tabel Access Modifier</h3>
+      <table class="acc-table">
+        <thead>
+          <tr>
+            <th>Modifier</th>
+            <th>Class Sendiri</th>
+            <th>Package Sama</th>
+            <th>Subclass</th>
+            <th>Beda Package</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>public</td>
+            <td><span class="chk">✓</span> Ya</td>
+            <td><span class="chk">✓</span> Ya</td>
+            <td><span class="chk">✓</span> Ya</td>
+            <td><span class="chk">✓</span> Ya</td>
+          </tr>
+          <tr>
+            <td>protected</td>
+            <td><span class="chk">✓</span> Ya</td>
+            <td><span class="chk">✓</span> Ya</td>
+            <td><span class="chk">✓</span> Ya</td>
+            <td><span class="x">✗</span> Tidak</td>
+          </tr>
+          <tr>
+            <td>(default)</td>
+            <td><span class="chk">✓</span> Ya</td>
+            <td><span class="chk">✓</span> Ya</td>
+            <td><span class="x">✗</span> Tidak</td>
+            <td><span class="x">✗</span> Tidak</td>
+          </tr>
+          <tr>
+            <td>private</td>
+            <td><span class="chk">✓</span> Ya</td>
+            <td><span class="x">✗</span> Tidak</td>
+            <td><span class="x">✗</span> Tidak</td>
+            <td><span class="x">✗</span> Tidak</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Implementasi Encapsulation</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <div class="code-lang">RekeningBank.java</div>
+        </div>
+        <pre><span class="kw">public class</span> <span class="fn">RekeningBank</span> {
+
+    <span class="cm">// Private — tidak bisa diakses langsung dari luar!</span>
+    <span class="kw">private double</span> saldo;
+    <span class="kw">private</span> String noRekening;
+    <span class="kw">private</span> String namaPemilik;
+
+    <span class="cm">// Constructor</span>
+    <span class="kw">public</span> <span class="fn">RekeningBank</span>(String noRek, String nama) {
+        <span class="kw">this</span>.noRekening  = noRek;
+        <span class="kw">this</span>.namaPemilik = nama;
+        <span class="kw">this</span>.saldo       = <span class="num">0</span>;
+    }
+
+    <span class="cm">// GETTER — membaca nilai private</span>
+    <span class="kw">public double</span> <span class="fn">getSaldo</span>()       { <span class="kw">return</span> saldo; }
+    <span class="kw">public</span> String  <span class="fn">getNoRekening</span>() { <span class="kw">return</span> noRekening; }
+    <span class="kw">public</span> String  <span class="fn">getNamaPemilik</span>(){ <span class="kw">return</span> namaPemilik; }
+
+    <span class="cm">// SETTER dengan VALIDASI — kontrol perubahan data</span>
+    <span class="kw">public void</span> <span class="fn">setor</span>(<span class="kw">double</span> jumlah) {
+        <span class="kw">if</span> (jumlah > <span class="num">0</span>) {
+            saldo += jumlah;
+            System.out.println(<span class="str">"Setor Rp"</span> + jumlah + <span class="str">" berhasil"</span>);
+        } <span class="kw">else</span> {
+            System.out.println(<span class="str">"Error: jumlah harus positif"</span>);
+        }
+    }
+
+    <span class="kw">public void</span> <span class="fn">tarik</span>(<span class="kw">double</span> jumlah) {
+        <span class="kw">if</span> (jumlah > <span class="num">0</span> && jumlah <= saldo) {
+            saldo -= jumlah;
+        } <span class="kw">else</span> {
+            System.out.println(<span class="str">"Saldo tidak cukup!"</span>);
+        }
+    }
+}
+
+<span class="cm">// Penggunaan</span>
+RekeningBank rek = <span class="kw">new</span> <span class="fn">RekeningBank</span>(<span class="str">"BCA-001"</span>, <span class="str">"Budi"</span>);
+rek.<span class="fn">setor</span>(<span class="num">1000000</span>);
+rek.<span class="fn">tarik</span>(<span class="num">250000</span>);
+System.out.println(rek.<span class="fn">getSaldo</span>()); <span class="cm">// 750000.0</span>
+<span class="cm">// rek.saldo = 9999;  ← COMPILE ERROR! Cannot access private field</span></pre>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-q" id="qq4">Mengapa atribut class dibuat <code>private</code> dalam encapsulation?</div>
+        <div class="quiz-options" id="qo4"></div>
+        <div id="qr4"></div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="nav-btn btn-secondary" onclick="goSection(3)">← Sebelumnya</button>
+        <button class="nav-btn btn-primary" onclick="goSection(5)">Selanjutnya →</button>
+      </div>
+    </div>
+
+    <!-- ===== SECTION 6 ===== -->
+    <div class="section" id="s5">
+      <div class="section-header">
+        <div class="module-tag">Modul 06 — Pilar OOP #2</div>
+        <h1 class="section-title">Inheritance<br>(Pewarisan)</h1>
+        <p class="section-desc">Class anak mewarisi atribut dan method dari class induk menggunakan keyword <code>extends</code>. Mendukung prinsip reuse kode.</p>
+      </div>
+
+      <h3>Hierarki Pewarisan</h3>
+      <div class="diagram">
+        <div class="d-box parent">
+          Hewan
+          <div class="d-sub">nama | makan() | bernafas()</div>
+        </div>
+        <div class="d-arrow">↓ extends</div>
+        <div class="d-row">
+          <div class="d-line">
+            <div class="d-box child">
+              Kucing
+              <div class="d-sub">+ meong() | + cakar()</div>
+            </div>
+          </div>
+          <div class="d-line">
+            <div class="d-box child2">
+              Anjing
+              <div class="d-sub">+ gonggong() | + gigit()</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Implementasi Inheritance</h3>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <div class="code-lang">Hewan.java + Kucing.java</div>
+        </div>
+        <pre><span class="cm">// ── CLASS INDUK (Parent / Superclass) ────</span>
+<span class="kw">public class</span> <span class="fn">Hewan</span> {
+    <span class="kw">protected</span> String nama; <span class="cm">// protected: bisa diakses subclass</span>
+    <span class="kw">protected int</span>    umur;
+
+    <span class="kw">public</span> <span class="fn">Hewan</span>(String nama, <span class="kw">int</span> umur) {
+        <span class="kw">this</span>.nama = nama;
+        <span class="kw">this</span>.umur = umur;
+    }
+
+    <span class="kw">public void</span> <span class="fn">makan</span>() {
+        System.out.println(nama + <span class="str">" sedang makan"</span>);
+    }
+
+    <span class="kw">public void</span> <span class="fn">info</span>() {
+        System.out.println(<span class="str">"Nama: "</span> + nama + <span class="str">", Umur: "</span> + umur);
+    }
+}
+
+<span class="cm">// ── CLASS ANAK (Child / Subclass) ────────</span>
+<span class="kw">public class</span> <span class="fn">Kucing</span> <span class="kw">extends</span> <span class="fn">Hewan</span> {
+    <span class="kw">private</span> String warna;
+
+    <span class="cm">// Constructor anak memanggil super() untuk init induk</span>
+    <span class="kw">public</span> <span class="fn">Kucing</span>(String nama, <span class="kw">int</span> umur, String warna) {
+        <span class="kw">super</span>(nama, umur); <span class="cm">// panggil constructor Hewan</span>
+        <span class="kw">this</span>.warna = warna;
+    }
+
+    <span class="cm">// Method tambahan milik Kucing</span>
+    <span class="kw">public void</span> <span class="fn">meong</span>() {
+        System.out.println(nama + <span class="str">": Meong! Meong!"</span>);
+    }
+}
+
+<span class="cm">// ── PENGGUNAAN ────────────────────────────</span>
+Kucing kitty = <span class="kw">new</span> <span class="fn">Kucing</span>(<span class="str">"Kitty"</span>, <span class="num">2</span>, <span class="str">"Putih"</span>);
+kitty.<span class="fn">info</span>();    <span class="cm">// diwarisi dari Hewan</span>
+kitty.<span class="fn">makan</span>();   <span class="cm">// diwarisi dari Hewan</span>
+kitty.<span class="fn">meong</span>();   <span class="cm">// milik Kucing sendiri</span></pre>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-q" id="qq5">Keyword apa yang digunakan class anak untuk memanggil constructor class induk?</div>
+        <div class="quiz-options" id="qo5"></div>
+        <div id="qr5"></div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="nav-btn btn-secondary" onclick="goSection(4)">← Sebelumnya</button>
+        <button class="nav-btn btn-primary" onclick="goSection(6)">Selanjutnya →</button>
+      </div>
+    </div>
+
+    <!-- ===== SECTION 7 ===== -->
+    <div class="section" id="s6">
+      <div class="section-header">
+        <div class="module-tag">Modul 07 — Pilar OOP #3</div>
+        <h1 class="section-title">Polymorphism</h1>
+        <p class="section-desc">Satu interface, banyak bentuk. Objek berbeda bisa merespons method yang sama dengan cara masing-masing.</p>
+      </div>
+
+      <div class="poly-nav">
+        <button class="poly-tab-btn active" onclick="polyTab(0)">Method Overriding</button>
+        <button class="poly-tab-btn" onclick="polyTab(1)">Method Overloading</button>
+        <button class="poly-tab-btn" onclick="polyTab(2)">Upcasting</button>
+      </div>
+
+      <div class="poly-panel active" id="pp0">
+        <p class="body" style="margin-top:1rem">Subclass mendefinisikan ulang method dari superclass. Java memanggil versi subclass saat runtime.</p>
+        <div class="code-wrap">
+          <div class="code-header">
+            <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+            <div class="code-lang">Override.java</div>
+          </div>
+          <pre><span class="kw">class</span> <span class="fn">Bentuk</span> {
+    <span class="kw">public void</span> <span class="fn">gambar</span>() {
+        System.out.println(<span class="str">"Menggambar bentuk generik"</span>);
+    }
+    <span class="kw">public double</span> <span class="fn">hitungLuas</span>() { <span class="kw">return</span> <span class="num">0</span>; }
+}
+
+<span class="kw">class</span> <span class="fn">Lingkaran</span> <span class="kw">extends</span> <span class="fn">Bentuk</span> {
+    <span class="kw">private double</span> radius;
+    <span class="kw">public</span> <span class="fn">Lingkaran</span>(<span class="kw">double</span> r) { <span class="kw">this</span>.radius = r; }
+
+    <span class="ann">@Override</span>
+    <span class="kw">public void</span> <span class="fn">gambar</span>() {
+        System.out.println(<span class="str">"○ Menggambar lingkaran"</span>);
+    }
+    <span class="ann">@Override</span>
+    <span class="kw">public double</span> <span class="fn">hitungLuas</span>() {
+        <span class="kw">return</span> Math.PI * radius * radius;
+    }
+}
+
+<span class="kw">class</span> <span class="fn">Persegi</span> <span class="kw">extends</span> <span class="fn">Bentuk</span> {
+    <span class="kw">private double</span> sisi;
+    <span class="kw">public</span> <span class="fn">Persegi</span>(<span class="kw">double</span> s) { <span class="kw">this</span>.sisi = s; }
+
+    <span class="ann">@Override</span>
+    <span class="kw">public void</span> <span class="fn">gambar</span>() {
+        System.out.println(<span class="str">"□ Menggambar persegi"</span>);
+    }
+    <span class="ann">@Override</span>
+    <span class="kw">public double</span> <span class="fn">hitungLuas</span>() { <span class="kw">return</span> sisi * sisi; }
+}</pre>
+        </div>
+      </div>
+
+      <div class="poly-panel" id="pp1">
+        <p class="body" style="margin-top:1rem">Method dengan nama sama tapi daftar parameter berbeda dalam satu class. Compiler memilih method yang tepat berdasarkan argumen.</p>
+        <div class="code-wrap">
+          <div class="code-header">
+            <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+            <div class="code-lang">Overload.java</div>
+          </div>
+          <pre><span class="kw">class</span> <span class="fn">Kalkulator</span> {
+
+    <span class="cm">// Overload 1: dua int</span>
+    <span class="kw">public int</span> <span class="fn">hitung</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) {
+        <span class="kw">return</span> a + b;
+    }
+
+    <span class="cm">// Overload 2: dua double</span>
+    <span class="kw">public double</span> <span class="fn">hitung</span>(<span class="kw">double</span> a, <span class="kw">double</span> b) {
+        <span class="kw">return</span> a + b;
+    }
+
+    <span class="cm">// Overload 3: tiga int</span>
+    <span class="kw">public int</span> <span class="fn">hitung</span>(<span class="kw">int</span> a, <span class="kw">int</span> b, <span class="kw">int</span> c) {
+        <span class="kw">return</span> a + b + c;
+    }
+
+    <span class="cm">// Overload 4: String concatenation</span>
+    <span class="kw">public</span> String <span class="fn">hitung</span>(String a, String b) {
+        <span class="kw">return</span> a + b;
+    }
+}
+
+<span class="cm">// Java otomatis pilih versi yang sesuai</span>
+Kalkulator k = <span class="kw">new</span> <span class="fn">Kalkulator</span>();
+k.<span class="fn">hitung</span>(<span class="num">1</span>, <span class="num">2</span>);            <span class="cm">// → int: 3</span>
+k.<span class="fn">hitung</span>(<span class="num">1.5</span>, <span class="num">2.5</span>);       <span class="cm">// → double: 4.0</span>
+k.<span class="fn">hitung</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>);         <span class="cm">// → int: 6</span>
+k.<span class="fn">hitung</span>(<span class="str">"Java"</span>, <span class="str">" OOP"</span>); <span class="cm">// → String: "Java OOP"</span></pre>
+        </div>
+      </div>
+
+      <div class="poly-panel" id="pp2">
+        <p class="body" style="margin-top:1rem">Objek anak disimpan dalam referensi tipe induk. Method yang dieksekusi ditentukan tipe objek asli saat runtime (dynamic dispatch).</p>
+        <div class="code-wrap">
+          <div class="code-header">
+            <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+            <div class="code-lang">Upcasting.java</div>
+          </div>
+          <pre><span class="cm">// Upcasting: referensi Bentuk, objek Lingkaran/Persegi</span>
+Bentuk b1 = <span class="kw">new</span> <span class="fn">Lingkaran</span>(<span class="num">7</span>);
+Bentuk b2 = <span class="kw">new</span> <span class="fn">Persegi</span>(<span class="num">5</span>);
+
+b1.<span class="fn">gambar</span>();       <span class="cm">// "○ Menggambar lingkaran"</span>
+b2.<span class="fn">gambar</span>();       <span class="cm">// "□ Menggambar persegi"</span>
+
+<span class="cm">// Manfaat nyata: array of Bentuk (polimorfik)</span>
+Bentuk[] shapes = {
+    <span class="kw">new</span> <span class="fn">Lingkaran</span>(<span class="num">5</span>),
+    <span class="kw">new</span> <span class="fn">Persegi</span>(<span class="num">4</span>),
+    <span class="kw">new</span> <span class="fn">Lingkaran</span>(<span class="num">3</span>)
+};
+
+<span class="cm">// Satu loop, tiga bentuk berbeda — inilah kekuatan polymorphism!</span>
+<span class="kw">for</span> (Bentuk s : shapes) {
+    s.<span class="fn">gambar</span>();
+    System.out.printf(<span class="str">"Luas: %.2f%n"</span>, s.<span class="fn">hitungLuas</span>());
+}
+
+<span class="cm">// Downcasting — kembalikan ke tipe asli jika perlu</span>
+<span class="kw">if</span> (b1 <span class="kw">instanceof</span> Lingkaran) {
+    Lingkaran l = (Lingkaran) b1; <span class="cm">// downcasting aman</span>
+}</pre>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-q" id="qq6">Apa perbedaan utama antara Method Overriding dan Method Overloading?</div>
+        <div class="quiz-options" id="qo6"></div>
+        <div id="qr6"></div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="nav-btn btn-secondary" onclick="goSection(5)">← Sebelumnya</button>
+        <button class="nav-btn btn-primary" style="background:var(--accent2);color:#fff" onclick="alert('Selamat! Kamu telah menyelesaikan semua 7 modul Java OOP! 🎉')">Selesai! 🎉</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+let cur = 0;
+const total = 7;
+
+const quizData = [
+  {
+    q: "Tipe data mana yang tepat untuk menyimpan nilai desimal seperti 3.14?",
+    opts: ["int", "boolean", "double", "char"],
+    ans: 2,
+    exp: "double digunakan untuk bilangan desimal presisi ganda (64-bit). int hanya untuk bilangan bulat."
+  },
+  {
+    q: "Apa yang dimaksud method dengan return type void?",
+    opts: ["Method yang gagal dijalankan", "Method yang tidak mengembalikan nilai apapun", "Method yang hanya bisa dipanggil sekali", "Method tanpa parameter"],
+    ans: 1,
+    exp: "void berarti method tidak mengembalikan nilai. Cukup menjalankan instruksi tanpa return."
+  },
+  {
+    q: "Apa output dari: int[] a = {10, 20, 30}; System.out.println(a[2]);",
+    opts: ["10", "20", "30", "ArrayIndexOutOfBoundsException"],
+    ans: 2,
+    exp: "Index array dimulai dari 0. a[0]=10, a[1]=20, a[2]=30. Jadi a[2] menghasilkan 30."
+  },
+  {
+    q: "Apa fungsi keyword this di dalam sebuah class?",
+    opts: ["Membuat objek baru dari class", "Merujuk ke class induk (superclass)", "Merujuk ke instance (objek) saat ini", "Menghapus atribut class"],
+    ans: 2,
+    exp: "'this' merujuk ke objek yang sedang berjalan (current instance), berguna untuk membedakan parameter lokal dengan atribut class."
+  },
+  {
+    q: "Mengapa atribut class dibuat private dalam encapsulation?",
+    opts: ["Agar kode berjalan lebih cepat", "Agar data tidak bisa diakses/diubah langsung dari luar class", "Agar method tidak bisa dipanggil", "Karena diwajibkan Java compiler"],
+    ans: 1,
+    exp: "private menyembunyikan data internal. Perubahan dikontrol via getter/setter yang bisa memvalidasi input — mencegah data tidak valid masuk."
+  },
+  {
+    q: "Keyword apa yang digunakan class anak untuk memanggil constructor class induk?",
+    opts: ["this()", "parent()", "super()", "extends()"],
+    ans: 2,
+    exp: "super() memanggil constructor dari class induk (superclass). Harus diletakkan di baris pertama constructor subclass."
+  },
+  {
+    q: "Apa perbedaan utama antara Method Overriding dan Method Overloading?",
+    opts: [
+      "Tidak ada perbedaan, keduanya sama",
+      "Overriding terjadi di class yang sama, Overloading di subclass",
+      "Overriding: subclass menulis ulang method induk. Overloading: method nama sama tapi parameter berbeda di class yang sama",
+      "Overloading hanya untuk constructor"
+    ],
+    ans: 2,
+    exp: "Overriding = subclass mendefinisikan ulang method superclass (runtime polymorphism). Overloading = beberapa method dengan nama sama tapi signature berbeda dalam satu class (compile-time polymorphism)."
+  }
+];
+
+const qStates = Array(total).fill(null);
+
+function initQuiz(i) {
+  const d = quizData[i];
+  const optsEl = document.getElementById('qo' + i);
+  if (!optsEl || optsEl.innerHTML) return;
+  d.opts.forEach((opt, j) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-btn';
+    btn.textContent = opt;
+    btn.onclick = () => answer(i, j);
+    btn.id = 'qb' + i + '_' + j;
+    optsEl.appendChild(btn);
+  });
+  if (qStates[i] !== null) restoreQuiz(i);
+}
+
+function answer(qi, oi) {
+  if (qStates[qi] !== null) return;
+  qStates[qi] = oi;
+  const d = quizData[qi];
+  const correct = oi === d.ans;
+  for (let j = 0; j < d.opts.length; j++) {
+    const btn = document.getElementById('qb' + qi + '_' + j);
+    if (j === d.ans) btn.className = 'quiz-btn correct';
+    else if (j === oi && !correct) btn.className = 'quiz-btn wrong';
+    btn.disabled = true;
+  }
+  const res = document.getElementById('qr' + qi);
+  res.innerHTML = `<div class="quiz-result ${correct ? 'ok' : 'no'}">${correct ? '✓ Benar!' : '✗ Salah.'} ${d.exp}</div>`;
+  if (correct) markDone(qi);
+}
+
+function restoreQuiz(qi) {
+  const d = quizData[qi];
+  const oi = qStates[qi];
+  for (let j = 0; j < d.opts.length; j++) {
+    const btn = document.getElementById('qb' + qi + '_' + j);
+    if (!btn) continue;
+    if (j === d.ans) btn.className = 'quiz-btn correct';
+    else if (j === oi && oi !== d.ans) btn.className = 'quiz-btn wrong';
+    btn.disabled = true;
+  }
+  const res = document.getElementById('qr' + qi);
+  if (res && !res.innerHTML) {
+    res.innerHTML = `<div class="quiz-result ${oi === d.ans ? 'ok' : 'no'}">${oi === d.ans ? '✓ Benar!' : '✗ Salah.'} ${d.exp}</div>`;
+  }
+}
+
+function markDone(i) {
+  const items = document.querySelectorAll('.nav-item');
+  if (items[i] && !items[i].classList.contains('active')) {
+    items[i].classList.add('done');
+  }
+}
+
+function goSection(i) {
+  document.querySelectorAll('.section').forEach((s, j) => {
+    s.classList.toggle('active', j === i);
+  });
+  document.querySelectorAll('.nav-item').forEach((n, j) => {
+    n.classList.toggle('active', j === i);
+  });
+  cur = i;
+  initQuiz(i);
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateProgress() {
+  const pct = Math.round(((cur + 1) / total) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-label').textContent = `Modul ${cur + 1} / ${total}`;
+}
+
+function polyTab(i) {
+  document.querySelectorAll('.poly-tab-btn').forEach((t, j) => t.classList.toggle('active', j === i));
+  document.querySelectorAll('.poly-panel').forEach((p, j) => p.classList.toggle('active', j === i));
+}
+
+// Init
+initQuiz(0);
+updateProgress();
+</script>
+</body>
+</html>
